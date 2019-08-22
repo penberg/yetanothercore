@@ -33,5 +33,5 @@ To run the generated image with *emulator*, type:
 To run the generated image with *simulator*, type:
 
 ```
-./build/rvsimu/rvsimu tests/add.bin
+./build/rvsim/rvsim tests/add.bin
 ```

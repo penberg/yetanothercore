@@ -1,3 +1,5 @@
+/* RISC-V RVI32 Verilator-based simulator */
+
 #include "Vrv_core.h"
 #include "verilated.h"
 
@@ -10,7 +12,7 @@
 
 #include <cstddef>
 #include <iostream>
-#include <image>
+#include <memory>
 
 class Image
 {

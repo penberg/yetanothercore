@@ -11,23 +11,27 @@ To build everything, type:
 make
 ```
 
-## Software Emulator
+## Softwate Emulator and Simulator
 
-You can run RISC-V programs under the software emulator as follows:
+### Building Images 
 
-```
-./build/rvemu/rvemu <image>
-```
-
-The image is expected to be a flat binary. You can generate one with:
+The software emulator and simulator expect animage to be a flat binary. You can generate one with:
 
 ```
 riscv64-linux-gnu-as tests/add.S -o tests/add.o \
   && riscv64-linux-gnu-objcopy -O binary tests/add.o tests/add.bin
 ```
 
-and then run it with:
+### Running Images
+
+To run the generated image with *emulator*, type:
 
 ```
 ./build/rvemu/rvemu tests/add.bin
+```
+
+To run the generated image with *simulator*, type:
+
+```
+./build/rvsimu/rvsimu tests/add.bin
 ```

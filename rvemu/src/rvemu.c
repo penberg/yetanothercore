@@ -22,11 +22,14 @@ typedef uint8_t rv_reg_t;
 typedef uint64_t rv_value_t;
 typedef int64_t rv_svalue_t;
 typedef uint32_t rv_insn_t;
+typedef uint32_t rv_addr_t;
 
 /* RISC-V CPU core.  */
 struct rv_cpu {
   rv_value_t PC;
   rv_value_t R[32];
+  void *ram;
+  size_t ram_size;
 };
 
 static void trace_exec_i(const char *op, rv_reg_t rd, rv_reg_t rs1,
@@ -155,8 +158,17 @@ static uint32_t rv_insn_i_imm(rv_insn_t insn) {
   return (insn >> 20) & 0b111111111111;
 }
 
-static void rv_cpu_exec(struct rv_cpu *cpu, rv_insn_t insn) {
-  printf("trace: decode: insn=%08x opcode=%02x\n", insn, rv_insn_opcode(insn));
+static uint32_t rv_cpu_read_mem32(struct rv_cpu *cpu, rv_addr_t addr) {
+  assert(addr < cpu->ram_size);
+
+  return *(uint32_t *)(cpu->ram + addr);
+}
+
+static void rv_cpu_exec(struct rv_cpu *cpu) {
+  rv_insn_t insn = rv_cpu_read_mem32(cpu, cpu->PC);
+  printf("trace: decode: pc=%08x, insn=%08x opcode=%02x\n", (uint32_t)cpu->PC,
+         insn, rv_insn_opcode(insn));
+  cpu->PC += 4;
   uint8_t opcode = rv_insn_opcode(insn);
   switch (opcode) {
   case 0b0010011: {
@@ -263,9 +275,10 @@ static void rv_cpu_exec(struct rv_cpu *cpu, rv_insn_t insn) {
   }
 }
 
-void rv_cpu_run(struct rv_cpu *cpu, void *ram) {
-  rv_insn_t *insn = ram + cpu->PC;
-  rv_cpu_exec(cpu, *insn);
+void rv_cpu_run(struct rv_cpu *cpu) {
+  for (;;) {
+    rv_cpu_exec(cpu);
+  }
 }
 
 static const char *program;
@@ -300,8 +313,11 @@ int main(int argc, char *argv[]) {
   if (ram_mmap == MAP_FAILED) {
     die("mmap");
   }
-  struct rv_cpu cpu = {};
-  rv_cpu_run(&cpu, ram_mmap);
+  struct rv_cpu cpu = {
+      .ram = ram_mmap,
+      .ram_size = st.st_size,
+  };
+  rv_cpu_run(&cpu);
   if (munmap(ram_mmap, st.st_size) < 0) {
     die("munmap");
   }

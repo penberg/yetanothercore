@@ -158,6 +158,10 @@ static uint32_t rv_insn_i_imm(rv_insn_t insn) {
   return (insn >> 20) & 0b111111111111;
 }
 
+static uint32_t rv_insn_sb_imm(rv_insn_t insn) {
+  return ((insn >> 25) & 0b11111) | ((insn >> 7) & 0b11111);
+}
+
 static uint32_t rv_cpu_read_mem32(struct rv_cpu *cpu, rv_addr_t addr) {
   assert(addr < cpu->ram_size);
 
@@ -168,7 +172,6 @@ static void rv_cpu_exec(struct rv_cpu *cpu) {
   rv_insn_t insn = rv_cpu_read_mem32(cpu, cpu->PC);
   printf("trace: decode: pc=%08x, insn=%08x opcode=%02x\n", (uint32_t)cpu->PC,
          insn, rv_insn_opcode(insn));
-  cpu->PC += 4;
   uint8_t opcode = rv_insn_opcode(insn);
   switch (opcode) {
   case 0b0010011: {
@@ -211,6 +214,45 @@ static void rv_cpu_exec(struct rv_cpu *cpu) {
         rv_op_srai(cpu->R, rd, rs1, imm & 0b11111);
       } else {
         rv_op_srli(cpu->R, rd, rs1, imm & 0b11111);
+      }
+      break;
+    }
+    default:
+      assert(0);
+    }
+    break;
+  }
+  case 0b1100011: {
+    uint32_t funct3 = rv_insn_funct3(insn);
+    uint8_t rs1 = rv_insn_rs1(insn);
+    uint8_t rs2 = rv_insn_rs2(insn);
+    uint32_t imm = rv_insn_sb_imm(insn);
+    switch (funct3) {
+    case 0x0: { /* beq */
+      if (cpu->R[rs1] == cpu->R[rs2]) {
+        cpu->PC += imm;
+        return;
+      }
+      break;
+    }
+    case 0x1: { /* bne */
+      if (cpu->R[rs1] != cpu->R[rs2]) {
+        cpu->PC += imm;
+        return;
+      }
+      break;
+    }
+    case 0x4: { /* blt */
+      if (cpu->R[rs1] < cpu->R[rs2]) {
+        cpu->PC += imm;
+        return;
+      }
+      break;
+    }
+    case 0x5: { /* bge */
+      if (cpu->R[rs1] >= cpu->R[rs2]) {
+        cpu->PC += imm;
+        return;
       }
       break;
     }
@@ -273,6 +315,7 @@ static void rv_cpu_exec(struct rv_cpu *cpu) {
   default:
     assert(0);
   }
+  cpu->PC += 4;
 }
 
 void rv_cpu_run(struct rv_cpu *cpu) {

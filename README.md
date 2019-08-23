@@ -18,8 +18,8 @@ make
 The software emulator and simulator expect animage to be a flat binary. You can generate one with:
 
 ```
-riscv64-linux-gnu-as tests/add.S -o tests/add.o \
-  && riscv64-linux-gnu-objcopy -O binary tests/add.o tests/add.bin
+riscv64-linux-gnu-as tests/alu.S -o tests/alu.o \
+  && riscv64-linux-gnu-objcopy -O binary tests/alu.o tests/alu.bin
 ```
 
 ### Running Images
@@ -27,11 +27,11 @@ riscv64-linux-gnu-as tests/add.S -o tests/add.o \
 To run the generated image with *emulator*, type:
 
 ```
-./build/rvemu/rvemu tests/add.bin
+./build/rvemu/rvemu tests/alu.bin
 ```
 
 To run the generated image with *simulator*, type:
 
 ```
-./build/rvsim/rvsim tests/add.bin
+./build/rvsim/rvsim tests/alu.bin
 ```

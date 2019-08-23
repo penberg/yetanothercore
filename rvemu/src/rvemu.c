@@ -37,6 +37,10 @@ static void trace_exec_i(const char *op, rv_reg_t rd, rv_reg_t rs1,
   printf("trace: exec: %s x%d, x%d, %ld\n", op, rd, rs1, imm);
 }
 
+static void trace_exec_sb(const char *op, rv_reg_t rs1, rv_reg_t rs2, rv_simm_t imm) {
+  printf("trace: exec: %s x%d, x%d, %ld\n", op, rs1, rs2, imm);
+}
+
 static void trace_exec_r(const char *op, rv_reg_t rd, rv_reg_t rs1,
                        rv_reg_t rs2) {
   printf("trace: exec: %s x%d, x%d, x%d\n", op, rd, rs1, rs2);
@@ -139,28 +143,32 @@ static void rv_cpu_exec(struct rv_cpu *cpu) {
     uint8_t rs2 = rv_insn_rs2(insn);
     uint32_t imm = rv_insn_sb_imm(insn);
     switch (funct3) {
-    case 0x0: { /* beq */
+    case 0x0: {
+      trace_exec_sb("beq", rs1, rs2, imm);
       if (cpu->R[rs1] == cpu->R[rs2]) {
         cpu->PC += imm;
         return;
       }
       break;
     }
-    case 0x1: { /* bne */
+    case 0x1: {
+      trace_exec_sb("bne", rs1, rs2, imm);
       if (cpu->R[rs1] != cpu->R[rs2]) {
         cpu->PC += imm;
         return;
       }
       break;
     }
-    case 0x4: { /* blt */
+    case 0x4: {
+      trace_exec_sb("blt", rs1, rs2, imm);
       if (cpu->R[rs1] < cpu->R[rs2]) {
         cpu->PC += imm;
         return;
       }
       break;
     }
-    case 0x5: { /* bge */
+    case 0x5: {
+      trace_exec_sb("bge", rs1, rs2, imm);
       if (cpu->R[rs1] >= cpu->R[rs2]) {
         cpu->PC += imm;
         return;

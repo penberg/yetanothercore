@@ -42,104 +42,6 @@ static void trace_exec(const char *op, rv_reg_t rd, rv_reg_t rs1,
   printf("trace: exec: %s x%d, x%d, x%d\n", op, rd, rs1, rs2);
 }
 
-static void rv_op_addi(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1,
-                       rv_simm_t imm) {
-  trace_exec_i("addi", rd, rs1, imm);
-  R[rd] = (rv_svalue_t)R[rs1] + imm;
-}
-
-static void rv_op_slti(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1,
-                       rv_simm_t imm) {
-  trace_exec_i("slti", rd, rs1, imm);
-  R[rd] = (rv_svalue_t)R[rs1] < imm;
-}
-
-static void rv_op_sltiu(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1,
-                        rv_imm_t imm) {
-  trace_exec_i("sltiu", rd, rs1, imm);
-  R[rd] = R[rs1] < imm;
-}
-
-static void rv_op_xori(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_imm_t imm) {
-  trace_exec_i("xori", rd, rs1, imm);
-  R[rd] = R[rs1] ^ imm;
-}
-
-static void rv_op_ori(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_imm_t imm) {
-  trace_exec_i("ori", rd, rs1, imm);
-  R[rd] = R[rs1] | imm;
-}
-
-static void rv_op_andi(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_imm_t imm) {
-  trace_exec_i("andi", rd, rs1, imm);
-  R[rd] = R[rs1] & imm;
-}
-
-static void rv_op_slli(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_imm_t imm) {
-  trace_exec_i("slli", rd, rs1, imm);
-  R[rd] = R[rs1] << imm;
-}
-
-static void rv_op_srli(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_imm_t imm) {
-  trace_exec_i("srli", rd, rs1, imm);
-  R[rd] = R[rs1] >> imm;
-}
-
-static void rv_op_srai(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_imm_t imm) {
-  trace_exec_i("srai", rd, rs1, imm);
-  R[rd] = (rv_svalue_t)R[rs1] >> imm;
-}
-
-static void rv_op_add(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2) {
-  trace_exec("add", rd, rs1, rs2);
-  R[rd] = R[rs1] + R[rs2];
-}
-
-static void rv_op_sub(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2) {
-  trace_exec("sub", rd, rs1, rs2);
-  R[rd] = R[rs1] - R[rs2];
-}
-
-static void rv_op_sll(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2) {
-  trace_exec("sll", rd, rs1, rs2);
-  R[rd] = R[rs1] << R[rs2];
-}
-
-static void rv_op_slt(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2) {
-  trace_exec("slt", rd, rs1, rs2);
-  R[rd] = (rv_svalue_t)R[rs1] < (rv_svalue_t)R[rs2];
-}
-
-static void rv_op_sltu(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2) {
-  trace_exec("sltu", rd, rs1, rs2);
-  R[rd] = R[rs1] < R[rs2];
-}
-
-static void rv_op_xor(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2) {
-  trace_exec("xor", rd, rs1, rs2);
-  R[rd] = R[rs1] ^ R[rs2];
-}
-
-static void rv_op_srl(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2) {
-  trace_exec("srl", rd, rs1, rs2);
-  R[rd] = R[rs1] >> R[rs2];
-}
-
-static void rv_op_sra(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2) {
-  trace_exec("sra", rd, rs1, rs2);
-  R[rd] = (rv_svalue_t)R[rs1] >> R[rs2];
-}
-
-static void rv_op_or(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2) {
-  trace_exec("or", rd, rs1, rs2);
-  R[rd] = R[rs1] | R[rs2];
-}
-
-static void rv_op_and(rv_value_t *R, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2) {
-  trace_exec("and", rd, rs1, rs2);
-  R[rd] = R[rs1] & R[rs2];
-}
-
 static uint8_t rv_insn_opcode(rv_insn_t insn) { return insn & 0b1111111; }
 
 static uint32_t rv_insn_funct3(rv_insn_t insn) { return (insn >> 12) & 0b111; }
@@ -181,39 +83,48 @@ static void rv_cpu_exec(struct rv_cpu *cpu) {
     uint32_t imm = rv_insn_i_imm(insn);
     switch (funct3) {
     case 0b000: {
-      rv_op_addi(cpu->R, rd, rs1, imm);
+      trace_exec_i("addi", rd, rs1, imm);
+      cpu->R[rd] = (rv_svalue_t)cpu->R[rs1] + imm;
       break;
     }
     case 0b010: {
-      rv_op_slti(cpu->R, rd, rs1, imm);
+      trace_exec_i("slti", rd, rs1, imm);
+      cpu->R[rd] = (rv_svalue_t)cpu->R[rs1] < imm;
       break;
     }
     case 0b011: {
-      rv_op_sltiu(cpu->R, rd, rs1, imm);
+      trace_exec_i("sltiu", rd, rs1, imm);
+      cpu->R[rd] = cpu->R[rs1] < imm;
       break;
     }
     case 0b100: {
-      rv_op_xori(cpu->R, rd, rs1, imm);
+      trace_exec_i("xori", rd, rs1, imm);
+      cpu->R[rd] = cpu->R[rs1] ^ imm;
       break;
     }
     case 0b110: {
-      rv_op_ori(cpu->R, rd, rs1, imm);
+      trace_exec_i("ori", rd, rs1, imm);
+      cpu->R[rd] = cpu->R[rs1] | imm;
       break;
     }
     case 0b111: {
-      rv_op_andi(cpu->R, rd, rs1, imm);
+      trace_exec_i("andi", rd, rs1, imm);
+      cpu->R[rd] = cpu->R[rs1] & imm;
       break;
     }
     case 0b001: {
-      rv_op_slli(cpu->R, rd, rs1, imm & 0b11111);
+      trace_exec_i("slli", rd, rs1, imm);
+      cpu->R[rd] = cpu->R[rs1] << imm;
       break;
     }
     case 0b101: {
       bool srai = (imm >> 7) & 0b01000;
       if (srai) {
-        rv_op_srai(cpu->R, rd, rs1, imm & 0b11111);
+        trace_exec_i("srai", rd, rs1, imm);
+        cpu->R[rd] = (rv_svalue_t)cpu->R[rs1] >> imm;
       } else {
-        rv_op_srli(cpu->R, rd, rs1, imm & 0b11111);
+        trace_exec_i("srli", rd, rs1, imm);
+        cpu->R[rd] = cpu->R[rs1] >> imm;
       }
       break;
     }
@@ -268,43 +179,53 @@ static void rv_cpu_exec(struct rv_cpu *cpu) {
     uint8_t rs2 = rv_insn_rs2(insn);
     switch (funct10) {
     case 0b0000000000: {
-      rv_op_add(cpu->R, rd, rs1, rs2);
+      trace_exec("add", rd, rs1, rs2);
+      cpu->R[rd] = cpu->R[rs1] + cpu->R[rs2];
       break;
     }
     case 0b0100000000: {
-      rv_op_sub(cpu->R, rd, rs1, rs2);
+      trace_exec("sub", rd, rs1, rs2);
+      cpu->R[rd] = cpu->R[rs1] - cpu->R[rs2];
       break;
     }
     case 0b0000000001: {
-      rv_op_sll(cpu->R, rd, rs1, rs2);
+      trace_exec("sll", rd, rs1, rs2);
+      cpu->R[rd] = cpu->R[rs1] << cpu->R[rs2];
       break;
     }
     case 0b0000000010: {
-      rv_op_slt(cpu->R, rd, rs1, rs2);
+      trace_exec("slt", rd, rs1, rs2);
+      cpu->R[rd] = (rv_svalue_t)cpu->R[rs1] < (rv_svalue_t)cpu->R[rs2];
       break;
     }
     case 0b0000000011: {
-      rv_op_sltu(cpu->R, rd, rs1, rs2);
+      trace_exec("sltu", rd, rs1, rs2);
+      cpu->R[rd] = cpu->R[rs1] < cpu->R[rs2];
       break;
     }
     case 0b0000000100: {
-      rv_op_xor(cpu->R, rd, rs1, rs2);
+      trace_exec("xor", rd, rs1, rs2);
+      cpu->R[rd] = cpu->R[rs1] ^ cpu->R[rs2];
       break;
     }
     case 0b0000000101: {
-      rv_op_srl(cpu->R, rd, rs1, rs2);
+      trace_exec("srl", rd, rs1, rs2);
+      cpu->R[rd] = cpu->R[rs1] >> cpu->R[rs2];
       break;
     }
     case 0b0100000101: {
-      rv_op_sra(cpu->R, rd, rs1, rs2);
+      trace_exec("sra", rd, rs1, rs2);
+      cpu->R[rd] = (rv_svalue_t)cpu->R[rs1] >> cpu->R[rs2];
       break;
     }
     case 0b0000000110: {
-      rv_op_or(cpu->R, rd, rs1, rs2);
+      trace_exec("or", rd, rs1, rs2);
+      cpu->R[rd] = cpu->R[rs1] | cpu->R[rs2];
       break;
     }
     case 0b0000000111: {
-      rv_op_and(cpu->R, rd, rs1, rs2);
+      trace_exec("and", rd, rs1, rs2);
+      cpu->R[rd] = cpu->R[rs1] & cpu->R[rs2];
       break;
     }
     default:

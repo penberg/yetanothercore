@@ -32,6 +32,11 @@ struct rv_cpu {
   size_t ram_size;
 };
 
+static void trace_exec_r(const char *op, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2)
+{
+  printf("trace: exec: %s x%d, x%d, x%d\n", op, rd, rs1, rs2);
+}
+
 static void trace_exec_i(const char *op, rv_reg_t rd, rv_reg_t rs1, rv_simm_t imm)
 {
   printf("trace: exec: %s x%d, x%d, %ld\n", op, rd, rs1, imm);
@@ -45,11 +50,6 @@ static void trace_exec_sb(const char *op, rv_reg_t rs1, rv_reg_t rs2, rv_simm_t 
 static void trace_exec_u(const char *op, rv_reg_t rd, uint32_t imm)
 {
   printf("trace: exec: %s x%d, %ld\n", op, rd, imm);
-}
-
-static void trace_exec_r(const char *op, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2)
-{
-  printf("trace: exec: %s x%d, x%d, x%d\n", op, rd, rs1, rs2);
 }
 
 static uint8_t rv_insn_opcode(rv_insn_t insn)

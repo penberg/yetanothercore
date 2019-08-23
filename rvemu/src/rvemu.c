@@ -42,6 +42,11 @@ static void trace_exec_sb(const char *op, rv_reg_t rs1, rv_reg_t rs2, rv_simm_t 
   printf("trace: exec: %s x%d, x%d, %ld\n", op, rs1, rs2, imm);
 }
 
+static void trace_exec_u(const char *op, rv_reg_t rd, uint32_t imm)
+{
+  printf("trace: exec: %s x%d, %ld\n", op, rd, imm);
+}
+
 static void trace_exec_r(const char *op, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2)
 {
   printf("trace: exec: %s x%d, x%d, x%d\n", op, rd, rs1, rs2);
@@ -85,6 +90,11 @@ static uint32_t rv_insn_i_imm(rv_insn_t insn)
 static uint32_t rv_insn_sb_imm(rv_insn_t insn)
 {
   return ((insn >> 25) & 0b11111) | ((insn >> 7) & 0b11111);
+}
+
+static uint32_t rv_insn_u_imm(rv_insn_t insn)
+{
+  return insn & ~0b111111111111UL;
 }
 
 static uint32_t rv_cpu_read_mem32(struct rv_cpu *cpu, rv_addr_t addr)
@@ -259,6 +269,13 @@ static void rv_cpu_exec(struct rv_cpu *cpu)
     default:
       assert(0);
     }
+    break;
+  }
+  case 0b0110111: {
+    uint8_t rd = rv_insn_rd(insn);
+    uint32_t imm = rv_insn_u_imm(insn);
+    trace_exec_u("lui", rd, imm);
+    cpu->R[rd] = imm;
     break;
   }
   default:

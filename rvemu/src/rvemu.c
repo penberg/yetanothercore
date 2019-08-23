@@ -32,52 +32,72 @@ struct rv_cpu {
   size_t ram_size;
 };
 
-static void trace_exec_i(const char *op, rv_reg_t rd, rv_reg_t rs1,
-                         rv_simm_t imm) {
+static void trace_exec_i(const char *op, rv_reg_t rd, rv_reg_t rs1, rv_simm_t imm)
+{
   printf("trace: exec: %s x%d, x%d, %ld\n", op, rd, rs1, imm);
 }
 
-static void trace_exec_sb(const char *op, rv_reg_t rs1, rv_reg_t rs2, rv_simm_t imm) {
+static void trace_exec_sb(const char *op, rv_reg_t rs1, rv_reg_t rs2, rv_simm_t imm)
+{
   printf("trace: exec: %s x%d, x%d, %ld\n", op, rs1, rs2, imm);
 }
 
-static void trace_exec_r(const char *op, rv_reg_t rd, rv_reg_t rs1,
-                       rv_reg_t rs2) {
+static void trace_exec_r(const char *op, rv_reg_t rd, rv_reg_t rs1, rv_reg_t rs2)
+{
   printf("trace: exec: %s x%d, x%d, x%d\n", op, rd, rs1, rs2);
 }
 
-static uint8_t rv_insn_opcode(rv_insn_t insn) { return insn & 0b1111111; }
+static uint8_t rv_insn_opcode(rv_insn_t insn)
+{
+  return insn & 0b1111111;
+}
 
-static uint32_t rv_insn_funct3(rv_insn_t insn) { return (insn >> 12) & 0b111; }
+static uint32_t rv_insn_funct3(rv_insn_t insn)
+{
+  return (insn >> 12) & 0b111;
+}
 
-static uint32_t rv_insn_funct7(rv_insn_t insn) {
+static uint32_t rv_insn_funct7(rv_insn_t insn)
+{
   return (insn >> 25) & 0b1111111;
 }
 
-static uint8_t rv_insn_rs2(rv_insn_t insn) { return (insn >> 20) & 0b11111; }
+static uint8_t rv_insn_rs2(rv_insn_t insn)
+{
+  return (insn >> 20) & 0b11111;
+}
 
-static uint8_t rv_insn_rs1(rv_insn_t insn) { return (insn >> 15) & 0b11111; }
+static uint8_t rv_insn_rs1(rv_insn_t insn)
+{
+  return (insn >> 15) & 0b11111;
+}
 
-static uint8_t rv_insn_rd(rv_insn_t insn) { return (insn >> 7) & 0b11111; }
+static uint8_t rv_insn_rd(rv_insn_t insn)
+{
+  return (insn >> 7) & 0b11111;
+}
 
-static uint32_t rv_insn_i_imm(rv_insn_t insn) {
+static uint32_t rv_insn_i_imm(rv_insn_t insn)
+{
   return (insn >> 20) & 0b111111111111;
 }
 
-static uint32_t rv_insn_sb_imm(rv_insn_t insn) {
+static uint32_t rv_insn_sb_imm(rv_insn_t insn)
+{
   return ((insn >> 25) & 0b11111) | ((insn >> 7) & 0b11111);
 }
 
-static uint32_t rv_cpu_read_mem32(struct rv_cpu *cpu, rv_addr_t addr) {
+static uint32_t rv_cpu_read_mem32(struct rv_cpu *cpu, rv_addr_t addr)
+{
   assert(addr < cpu->ram_size);
 
   return *(uint32_t *)(cpu->ram + addr);
 }
 
-static void rv_cpu_exec(struct rv_cpu *cpu) {
+static void rv_cpu_exec(struct rv_cpu *cpu)
+{
   rv_insn_t insn = rv_cpu_read_mem32(cpu, cpu->PC);
-  printf("trace: decode: pc=%08x, insn=%08x opcode=%02x\n", (uint32_t)cpu->PC,
-         insn, rv_insn_opcode(insn));
+  printf("trace: decode: pc=%08x, insn=%08x opcode=%02x\n", (uint32_t)cpu->PC, insn, rv_insn_opcode(insn));
   uint8_t opcode = rv_insn_opcode(insn);
   switch (opcode) {
   case 0b0010011: {
@@ -247,7 +267,8 @@ static void rv_cpu_exec(struct rv_cpu *cpu) {
   cpu->PC += 4;
 }
 
-void rv_cpu_run(struct rv_cpu *cpu) {
+void rv_cpu_run(struct rv_cpu *cpu)
+{
   for (;;) {
     rv_cpu_exec(cpu);
   }
@@ -255,7 +276,8 @@ void rv_cpu_run(struct rv_cpu *cpu) {
 
 static const char *program;
 
-static void die(const char *fmt, ...) {
+static void die(const char *fmt, ...)
+{
   va_list ap;
 
   fprintf(stderr, "%s: error: ", program);
@@ -266,7 +288,8 @@ static void die(const char *fmt, ...) {
   exit(1);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   program = basename(argv[0]);
   if (argc != 2) {
     fprintf(stderr, "usage: %s [image]\n", program);

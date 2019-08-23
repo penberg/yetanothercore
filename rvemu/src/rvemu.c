@@ -37,7 +37,7 @@ static void trace_exec_i(const char *op, rv_reg_t rd, rv_reg_t rs1,
   printf("trace: exec: %s x%d, x%d, %ld\n", op, rd, rs1, imm);
 }
 
-static void trace_exec(const char *op, rv_reg_t rd, rv_reg_t rs1,
+static void trace_exec_r(const char *op, rv_reg_t rd, rv_reg_t rs1,
                        rv_reg_t rs2) {
   printf("trace: exec: %s x%d, x%d, x%d\n", op, rd, rs1, rs2);
 }
@@ -179,52 +179,52 @@ static void rv_cpu_exec(struct rv_cpu *cpu) {
     uint8_t rs2 = rv_insn_rs2(insn);
     switch (funct10) {
     case 0b0000000000: {
-      trace_exec("add", rd, rs1, rs2);
+      trace_exec_r("add", rd, rs1, rs2);
       cpu->R[rd] = cpu->R[rs1] + cpu->R[rs2];
       break;
     }
     case 0b0100000000: {
-      trace_exec("sub", rd, rs1, rs2);
+      trace_exec_r("sub", rd, rs1, rs2);
       cpu->R[rd] = cpu->R[rs1] - cpu->R[rs2];
       break;
     }
     case 0b0000000001: {
-      trace_exec("sll", rd, rs1, rs2);
+      trace_exec_r("sll", rd, rs1, rs2);
       cpu->R[rd] = cpu->R[rs1] << cpu->R[rs2];
       break;
     }
     case 0b0000000010: {
-      trace_exec("slt", rd, rs1, rs2);
+      trace_exec_r("slt", rd, rs1, rs2);
       cpu->R[rd] = (rv_svalue_t)cpu->R[rs1] < (rv_svalue_t)cpu->R[rs2];
       break;
     }
     case 0b0000000011: {
-      trace_exec("sltu", rd, rs1, rs2);
+      trace_exec_r("sltu", rd, rs1, rs2);
       cpu->R[rd] = cpu->R[rs1] < cpu->R[rs2];
       break;
     }
     case 0b0000000100: {
-      trace_exec("xor", rd, rs1, rs2);
+      trace_exec_r("xor", rd, rs1, rs2);
       cpu->R[rd] = cpu->R[rs1] ^ cpu->R[rs2];
       break;
     }
     case 0b0000000101: {
-      trace_exec("srl", rd, rs1, rs2);
+      trace_exec_r("srl", rd, rs1, rs2);
       cpu->R[rd] = cpu->R[rs1] >> cpu->R[rs2];
       break;
     }
     case 0b0100000101: {
-      trace_exec("sra", rd, rs1, rs2);
+      trace_exec_r("sra", rd, rs1, rs2);
       cpu->R[rd] = (rv_svalue_t)cpu->R[rs1] >> cpu->R[rs2];
       break;
     }
     case 0b0000000110: {
-      trace_exec("or", rd, rs1, rs2);
+      trace_exec_r("or", rd, rs1, rs2);
       cpu->R[rd] = cpu->R[rs1] | cpu->R[rs2];
       break;
     }
     case 0b0000000111: {
-      trace_exec("and", rd, rs1, rs2);
+      trace_exec_r("and", rd, rs1, rs2);
       cpu->R[rd] = cpu->R[rs1] & cpu->R[rs2];
       break;
     }

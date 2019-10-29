@@ -27,10 +27,11 @@ module riscv_register_file #(
 
   // Write to "rd" register only if writes are enabled and it is not the
   // "x0" register, which is hard-wired to zero. 
-  always_ff @(posedge clock)
-  begin
-    if (rd_enable_write & (rd_addr != 5'b0))
+  always_ff @(posedge clock) begin
+    if (rd_enable_write & (rd_addr != 5'b0)) begin
       registers[rd_addr] <= rd_data;
+      $display("register writeback: %h -> %d", rd_data, rd_addr);
+    end
   end
 
 endmodule

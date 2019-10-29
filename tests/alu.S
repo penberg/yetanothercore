@@ -1,4 +1,6 @@
-lui t0, 0xfffff
+lui t0, 0x01
+lui t1, 0x02
+lui t2, 0x03
 
 add t0, t1, t2
 sub t0, t1, t2

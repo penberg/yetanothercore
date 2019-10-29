@@ -33,7 +33,8 @@ module riscv_core #(
       .funct7(funct7),
       .imm(imm)
   );
- 
+
+  wire rd_enable_write;
   wire [XLEN-1:0] rd_data;
   wire [XLEN-1:0] rs1_data;
   wire [XLEN-1:0] rs2_data;
@@ -46,7 +47,7 @@ module riscv_core #(
     .rs1_addr(rs1),
     .rs2_addr(rs2),
     .rd_addr(rd),
-    .rd_enable_write(0), /* FIXME */
+    .rd_enable_write(rd_enable_write),
     .rd_data(rd_data),
     .rs1_data(rs1_data),
     .rs2_data(rs2_data)
@@ -55,14 +56,14 @@ module riscv_core #(
   riscv_insn_exec #(
       .XLEN(XLEN))
   exec(
-    .clock(clock),
     .opcode(opcode),
-    .rd(rd_data),
     .funct3(funct3),
     .rs1(rs1_data),
     .rs2(rs2_data),
     .funct7(funct7),
-    .imm(imm)
+    .imm(imm),
+    .rd_enable_write(rd_enable_write),
+    .rd(rd_data)
   );
 
 endmodule

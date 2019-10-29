@@ -1,6 +1,6 @@
-/* RISC-V RVI32 Verilator-based simulator */
+/* RISC-V Verilator-based simulator */
 
-#include "Vrv_core.h"
+#include "Vriscv_core.h"
 #include "verilated.h"
 
 #include <fcntl.h>
@@ -77,20 +77,20 @@ int main(int argc, char *argv[])
   auto image = Image::load(image_filename);
 
   /* Reset the core: */
-  auto core = std::make_unique<Vrv_core>();
-  core->rst_i = 1;
+  auto core = std::make_unique<Vriscv_core>();
+  core->reset = 1;
   core->eval();
-  core->rst_i = 0;
+  core->reset = 0;
 
   /* Start simulation: */
   while (!Verilated::gotFinish()) {
     /* Rising clock edge: */
-    core->insn_data_i = image.read32(core->insn_addr_o);
-    core->clk_i = 1;
+    core->insn_data_bus = image.read32(core->insn_addr_bus);
+    core->clock = 1;
     core->eval();
 
     /* Falling clock edge: */
-    core->clk_i = 0;
+    core->clock = 0;
     core->eval();
   }
 }

@@ -1,9 +1,8 @@
-# RISC-V CPU core
+# Yet another CPU core
 
-This project aims to implement a simple RISC-V core, with the intent to learn more about RISC-V architecture, and digital logic design with SystemVerilog.
-The current plan is to implement an in-order, single issue CPU core with classic five stage RISC pipeline, which supports the RVI32 instruction set.
+This is a single-cycle RISC-V core written in SystemVerilog for educational purposes.
 
-## Building from Sources
+## Building from sources
 
 To build everything, type:
 
@@ -11,9 +10,9 @@ To build everything, type:
 make
 ```
 
-## Softwate Emulator and Simulator
+## Softwate emulator and simulator
 
-### Building Images 
+### Building images 
 
 The software emulator and simulator expect animage to be a flat binary. You can generate one with:
 
@@ -22,7 +21,7 @@ riscv64-linux-gnu-as tests/alu.S -o tests/alu.o \
   && riscv64-linux-gnu-objcopy -O binary tests/alu.o tests/alu.bin
 ```
 
-### Running Images
+### Running images
 
 To run the generated image with *emulator*, type:
 
@@ -35,3 +34,7 @@ To run the generated image with *simulator*, type:
 ```
 ./build/rvsim/rvsim tests/alu.bin
 ```
+
+## Other RISC-V cores
+
+https://github.com/tilk/riscv-simple-sv

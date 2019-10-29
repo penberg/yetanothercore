@@ -15,18 +15,12 @@ module riscv_core #(
       .insn_addr(insn_addr_bus)
   );
 
-  /* verilator lint_off UNUSED */
   logic [6:0] opcode;
-  /* verilator lint_on UNUSED */
   logic [4:0] rd;
-  /* verilator lint_off UNUSED */
   logic [2:0] funct3;
-  /* verilator lint_on UNUSED */
   logic [4:0] rs1;
   logic [4:0] rs2;
-  /* verilator lint_off UNUSED */
   logic [6:0] funct7;
-  /* verilator lint_on UNUSED */
   logic [19:0] imm;
 
   riscv_insn_decode decode(
@@ -40,9 +34,7 @@ module riscv_core #(
       .imm(imm)
   );
  
-  /* verilator lint_off UNDRIVEN */
   logic [XLEN-1:0] rd_data;
-  /* verilator lint_on UNDRIVEN */
   logic [XLEN-1:0] rs1_data;
   logic [XLEN-1:0] rs2_data;
 

@@ -15,13 +15,13 @@ module riscv_core #(
       .insn_addr(insn_addr_bus)
   );
 
-  logic [6:0] opcode;
-  logic [4:0] rd;
-  logic [2:0] funct3;
-  logic [4:0] rs1;
-  logic [4:0] rs2;
-  logic [6:0] funct7;
-  logic [19:0] imm;
+  wire [6:0] opcode;
+  wire [4:0] rd;
+  wire [2:0] funct3;
+  wire [4:0] rs1;
+  wire [4:0] rs2;
+  wire [6:0] funct7;
+  wire [19:0] imm;
 
   riscv_insn_decode decode(
       .insn(insn_data_bus),
@@ -34,9 +34,9 @@ module riscv_core #(
       .imm(imm)
   );
  
-  logic [XLEN-1:0] rd_data;
-  logic [XLEN-1:0] rs1_data;
-  logic [XLEN-1:0] rs2_data;
+  wire [XLEN-1:0] rd_data;
+  wire [XLEN-1:0] rs1_data;
+  wire [XLEN-1:0] rs2_data;
 
   riscv_register_file #(
       .XLEN(XLEN))

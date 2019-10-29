@@ -7,6 +7,7 @@ module riscv_insn_exec #(
   input  [6:0]      opcode,
   input  [2:0]      funct3,
   input  [6:0]      funct7,
+  input  [19:0]     imm,
   input  [XLEN-1:0] rs1,
   input  [XLEN-1:0] rs2,
   output [XLEN-1:0] rd
@@ -21,8 +22,10 @@ module riscv_insn_exec #(
     //$display("funct10=", funct10);
  
     case (opcode)
-      7'b0110111:
+      7'b0110111: begin
         $display("lui");
+        rd <= {{12{1'b0}}, imm};
+      end
       7'b0110011:
         case (funct10)
           10'b0000000000: begin

@@ -27,6 +27,7 @@ module riscv_core #(
   /* verilator lint_off UNUSED */
   logic [6:0] funct7;
   /* verilator lint_on UNUSED */
+  logic [19:0] imm;
 
   riscv_insn_decode decode(
       .insn(insn_data_bus),
@@ -35,7 +36,8 @@ module riscv_core #(
       .funct3(funct3),
       .rs1(rs1),
       .rs2(rs2),
-      .funct7(funct7)
+      .funct7(funct7),
+      .imm(imm)
   );
  
   /* verilator lint_off UNDRIVEN */
@@ -67,7 +69,8 @@ module riscv_core #(
     .funct3(funct3),
     .rs1(rs1_data),
     .rs2(rs2_data),
-    .funct7(funct7)
+    .funct7(funct7),
+    .imm(imm)
   );
 
 endmodule

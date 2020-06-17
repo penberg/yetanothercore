@@ -15,29 +15,46 @@ module riscv_core #(
       .insn_addr(insn_addr_bus)
   );
 
-  wire [6:0] opcode;
-  wire [4:0] rd;
-  wire [2:0] funct3;
-  wire [4:0] rs1;
-  wire [4:0] rs2;
-  wire [6:0] funct7;
-  wire [19:0] imm;
+  logic [3:0] alu_op;
+
+  logic [4:0] rd;
+  logic [4:0] rs1;
+  logic [4:0] rs2;
+  logic [XLEN-1:0] alu_result;
+  logic immediate_select;
+  logic [XLEN-1:0] immediate;
 
   insn_decode decode(
       .insn(insn_data_bus),
-      .opcode(opcode),
+      .alu_op(alu_op),
       .rd(rd),
-      .funct3(funct3),
       .rs1(rs1),
       .rs2(rs2),
-      .funct7(funct7),
-      .imm(imm)
+      .rd_enable_write(rd_enable_write),
+      .immediate_select(immediate_select),
+      .immediate(immediate)
   );
 
   wire rd_enable_write;
   wire [XLEN-1:0] rd_data;
   wire [XLEN-1:0] rs1_data;
   wire [XLEN-1:0] rs2_data;
+
+  always @ (*) begin
+    if (immediate_select == 0)
+      rd_data = alu_result;
+    else
+      rd_data = immediate;
+  end
+
+  alu #(
+      .XLEN(XLEN))
+  alu(
+    .alu_op(alu_op),
+    .operand_a(rs1_data),
+    .operand_b(rs2_data),
+    .result(alu_result)
+  );
 
   regfile #(
       .XLEN(XLEN))
@@ -51,19 +68,6 @@ module riscv_core #(
     .rd_data(rd_data),
     .rs1_data(rs1_data),
     .rs2_data(rs2_data)
-  );
-
-  insn_exec #(
-      .XLEN(XLEN))
-  exec(
-    .opcode(opcode),
-    .funct3(funct3),
-    .rs1(rs1_data),
-    .rs2(rs2_data),
-    .funct7(funct7),
-    .imm(imm),
-    .rd_enable_write(rd_enable_write),
-    .rd(rd_data)
   );
 
 endmodule

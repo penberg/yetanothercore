@@ -1,6 +1,6 @@
 // RISC-V instruction execution unit.
 
-module riscv_insn_exec #(
+module insn_exec #(
   parameter XLEN
 ) (
   input  [6:0]      opcode,

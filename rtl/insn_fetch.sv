@@ -1,4 +1,4 @@
-module riscv_insn_fetch #(
+module insn_fetch #(
     parameter XLEN
 )(
     input             clock,

@@ -2,7 +2,7 @@
 
 /* verilator lint_off UNUSED */
 
-module riscv_register_file #(
+module regfile #(
   parameter XLEN
 ) (
   input           clock,           // The clock signal.

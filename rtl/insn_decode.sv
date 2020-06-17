@@ -1,6 +1,6 @@
 // RISC-V instruction decoder
 
-module riscv_insn_decode(
+module insn_decode(
   input  [31:0] insn,
   output [6:0]  opcode,
   output [4:0]  rd,

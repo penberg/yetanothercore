@@ -7,7 +7,7 @@ module riscv_core #(
     output [XLEN-1:0] insn_addr_bus
 );
 
-  riscv_insn_fetch #(
+  insn_fetch #(
       .XLEN(XLEN))
   fetch(
       .clock(clock),
@@ -23,7 +23,7 @@ module riscv_core #(
   wire [6:0] funct7;
   wire [19:0] imm;
 
-  riscv_insn_decode decode(
+  insn_decode decode(
       .insn(insn_data_bus),
       .opcode(opcode),
       .rd(rd),
@@ -39,7 +39,7 @@ module riscv_core #(
   wire [XLEN-1:0] rs1_data;
   wire [XLEN-1:0] rs2_data;
 
-  riscv_register_file #(
+  regfile #(
       .XLEN(XLEN))
   regfile(
     .clock(clock),
@@ -53,7 +53,7 @@ module riscv_core #(
     .rs2_data(rs2_data)
   );
 
-  riscv_insn_exec #(
+  insn_exec #(
       .XLEN(XLEN))
   exec(
     .opcode(opcode),

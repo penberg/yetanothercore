@@ -3,14 +3,14 @@
 module insn_exec #(
   parameter XLEN
 ) (
-  input  [6:0]      opcode,
-  input  [2:0]      funct3,
-  input  [6:0]      funct7,
-  input  [19:0]     imm,
-  input  [XLEN-1:0] rs1,
-  input  [XLEN-1:0] rs2,
-  output            rd_enable_write,
-  output [XLEN-1:0] rd
+  input logic  [6:0]      opcode,
+  input logic  [2:0]      funct3,
+  input logic  [6:0]      funct7,
+  input logic  [19:0]     imm,
+  input logic  [XLEN-1:0] rs1,
+  input logic  [XLEN-1:0] rs2,
+  output logic            rd_enable_write,
+  output logic [XLEN-1:0] rd
 );
 
   always @ (*) begin
